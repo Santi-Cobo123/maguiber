@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { View, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import OnboardingScreen from './screens/OnboardingScreen';
-import LoginScreen from './screens/LoginScreen';
-import RegisterScreen from './screens/RegisterScreen';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, View } from 'react-native';
 import HomeScreen from './screens/HomeScreen';
+import LoginScreen from './screens/LoginScreen';
+import OnboardingScreen from './screens/OnboardingScreen';
+import RegisterScreen from './screens/RegisterScreen';
+import CameraScreen from './screens/CameraScreen';
+import LocationScreen from './screens/LocationScreen';
 
 export default function App() {
   const [token, setToken] = useState(null);
@@ -18,24 +20,14 @@ export default function App() {
 
   const checkAppState = async () => {
     try {
-      // Verificar si ya vio onboarding
-      const hasSeenOnboarding = await AsyncStorage.getItem('hasSeenOnboarding');
-      
-      // Verificar si tiene token
-      const savedToken = await AsyncStorage.getItem('userToken');
+      // LIMPIAR datos previos para forzar onboarding
+      await AsyncStorage.removeItem('hasSeenOnboarding');
+      await AsyncStorage.removeItem('userToken');
 
-      // Si no ha visto onboarding, mostrarlo
-      if (!hasSeenOnboarding) {
-        setShowOnboarding(true);
-        setCurrentScreen('onboarding');
-      } else if (savedToken) {
-        // Si tiene token y ya vio onboarding, ir a home
-        setToken(savedToken);
-        setCurrentScreen('home');
-      } else {
-        // Si no tiene token, ir a login
-        setCurrentScreen('login');
-      }
+      // SIEMPRE mostrar onboarding primero
+      setShowOnboarding(true);
+      setCurrentScreen('onboarding');
+
     } catch (error) {
       console.error('Error checking app state:', error);
     } finally {
@@ -97,7 +89,17 @@ export default function App() {
 
   // Mostrar home
   if (currentScreen === 'home') {
-    return <HomeScreen onLogout={handleLogout} />;
+    return <HomeScreen onLogout={handleLogout} onNavigate={setCurrentScreen} />;
+  }
+
+  // Mostrar cámara
+  if (currentScreen === 'camera') {
+    return <CameraScreen onBack={() => setCurrentScreen('home')} />;
+  }
+
+  // Mostrar ubicación
+  if (currentScreen === 'location') {
+    return <LocationScreen onBack={() => setCurrentScreen('home')} />;
   }
 
   // Mostrar registro

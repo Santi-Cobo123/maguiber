@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { obtenerPerfil, logout } from '../services/authService';
 
-export default function HomeScreen({ onLogout }) {
+export default function HomeScreen({ onLogout, onNavigate }) {
     const [usuario, setUsuario] = useState(null);
     const [loading, setLoading] = useState(true);
     const [logoutLoading, setLogoutLoading] = useState(false);
@@ -83,6 +83,34 @@ export default function HomeScreen({ onLogout }) {
                             {usuario?.activo ? 'Activo' : 'Inactivo'}
                         </Text>
                     </View>
+                </View>
+
+                {/* ── Funcionalidades Nativas ── */}
+                <View style={styles.nativasPanel}>
+                    <Text style={styles.tituloPanel}>📱 Funcionalidades del dispositivo</Text>
+                    <TouchableOpacity
+                        style={styles.botonNativa}
+                        onPress={() => onNavigate('camera')}
+                    >
+                        <Text style={styles.botonNativaIcono}>📷</Text>
+                        <View style={styles.botonNativaTextos}>
+                            <Text style={styles.botonNativaTitulo}>Cámara</Text>
+                            <Text style={styles.botonNativaSubtitulo}>Tomar fotos o elegir de galería</Text>
+                        </View>
+                        <Text style={styles.flecha}>›</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={styles.botonNativa}
+                        onPress={() => onNavigate('location')}
+                    >
+                        <Text style={styles.botonNativaIcono}>📍</Text>
+                        <View style={styles.botonNativaTextos}>
+                            <Text style={styles.botonNativaTitulo}>Geolocalización</Text>
+                            <Text style={styles.botonNativaSubtitulo}>Ver tu ubicación en tiempo real</Text>
+                        </View>
+                        <Text style={styles.flecha}>›</Text>
+                    </TouchableOpacity>
                 </View>
 
                 {usuario?.rol === 'Admin' && (
@@ -190,6 +218,48 @@ const styles = StyleSheet.create({
     divisor: {
         height: 1,
         backgroundColor: '#eee',
+    },
+    nativasPanel: {
+        backgroundColor: '#F0F4FF',
+        borderRadius: 12,
+        padding: 20,
+        marginBottom: 20,
+        borderLeftWidth: 4,
+        borderLeftColor: '#3D5AFE',
+    },
+    botonNativa: {
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        padding: 14,
+        marginBottom: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+        elevation: 1,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 2,
+    },
+    botonNativaIcono: {
+        fontSize: 24,
+    },
+    botonNativaTextos: {
+        flex: 1,
+    },
+    botonNativaTitulo: {
+        fontSize: 15,
+        fontWeight: '600',
+        color: '#1A1A2E',
+    },
+    botonNativaSubtitulo: {
+        fontSize: 12,
+        color: '#888',
+        marginTop: 2,
+    },
+    flecha: {
+        fontSize: 22,
+        color: '#999',
     },
     adminPanel: {
         backgroundColor: '#FFF3E0',
