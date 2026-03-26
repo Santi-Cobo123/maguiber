@@ -1,3 +1,4 @@
+// screens/LoginScreen.js
 import React, { useState } from 'react';
 import {
     View,
@@ -30,12 +31,17 @@ export default function LoginScreen({ onSuccess, onRegister }) {
         try {
             const response = await loginUsuario(email, contraseña);
 
+            // Ahora response tiene { success, token, usuario }
             if (response.success) {
                 Alert.alert('Éxito', 'Sesión iniciada correctamente');
                 onSuccess();
+            } else {
+                Alert.alert('Error', response.message || 'Error al iniciar sesión');
             }
         } catch (error) {
-            Alert.alert('Error', error.message || 'Error al iniciar sesión');
+            // Si el error es un objeto con message, úsalo
+            const errorMessage = error.message || 'Error al iniciar sesión';
+            Alert.alert('Error', errorMessage);
         } finally {
             setLoading(false);
         }

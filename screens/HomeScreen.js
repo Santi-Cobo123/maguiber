@@ -1,3 +1,4 @@
+// screens/HomeScreen.js
 import React, { useState, useEffect } from 'react';
 import {
     View,
@@ -21,9 +22,12 @@ export default function HomeScreen({ onLogout, onNavigate }) {
 
     const cargarPerfil = async () => {
         try {
-            const data = await obtenerPerfil();
-            if (data.success) {
-                setUsuario(data.usuario);
+            const response = await obtenerPerfil();
+            // Ahora response tiene { success, usuario }
+            if (response.success && response.usuario) {
+                setUsuario(response.usuario);
+            } else {
+                Alert.alert('Error', response.message || 'No se pudo cargar el perfil');
             }
         } catch (error) {
             Alert.alert('Error', error.message || 'No se pudo cargar el perfil');

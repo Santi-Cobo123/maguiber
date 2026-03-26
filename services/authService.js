@@ -1,4 +1,4 @@
-// services/authService.js (Para el frontend Expo)
+// services/authService.js
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -33,9 +33,9 @@ export const registroUsuario = async (nombre, email, contraseña, id_rol) => {
             contraseña,
             id_rol
         });
-        return response.data;
+        return { success: true, data: response.data };
     } catch (error) {
-        throw error.response?.data || error.message;
+        throw { success: false, message: error.response?.data?.message || error.message };
     }
 };
 
@@ -52,9 +52,17 @@ export const loginUsuario = async (email, contraseña) => {
             await AsyncStorage.setItem('usuario', JSON.stringify(response.data.usuario));
         }
 
-        return response.data;
+        // Devolver estructura consistente
+        return { 
+            success: true, 
+            token: response.data.token,
+            usuario: response.data.usuario 
+        };
     } catch (error) {
-        throw error.response?.data || error.message;
+        throw { 
+            success: false, 
+            message: error.response?.data?.message || 'Error al iniciar sesión' 
+        };
     }
 };
 
@@ -62,9 +70,16 @@ export const loginUsuario = async (email, contraseña) => {
 export const obtenerPerfil = async () => {
     try {
         const response = await apiClient.get('/perfil');
-        return response.data;
+        // Devolver estructura consistente
+        return { 
+            success: true, 
+            usuario: response.data.usuario || response.data // Asegura compatibilidad
+        };
     } catch (error) {
-        throw error.response?.data || error.message;
+        throw { 
+            success: false, 
+            message: error.response?.data?.message || 'No se pudo cargar el perfil' 
+        };
     }
 };
 
@@ -72,9 +87,9 @@ export const obtenerPerfil = async () => {
 export const obtenerRoles = async () => {
     try {
         const response = await apiClient.get('/roles');
-        return response.data;
+        return { success: true, roles: response.data };
     } catch (error) {
-        throw error.response?.data || error.message;
+        throw { success: false, message: error.response?.data?.message || error.message };
     }
 };
 
@@ -83,9 +98,9 @@ export const logout = async () => {
     try {
         await AsyncStorage.removeItem('userToken');
         await AsyncStorage.removeItem('usuario');
-        return true;
+        return { success: true };
     } catch (error) {
-        throw error;
+        throw { success: false, message: error.message };
     }
 };
 
